@@ -1,0 +1,170 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="card">
+      <div class="card-body text-center">
+        <h1 class="titulo">EMPLEADOS</h1>
+        <button class="btn btn-success float-end"  data-bs-toggle="modal" data-bs-target="#formAgregar">Agregar</button>
+        <div class="empleados" *ngIf="empleados.length > 0">
+          <table class="table table-striped mt-3">
+            <thead>
+              <tr>
+                <th scope="col">Primer apellido</th>
+                <th scope="col">Segundo Apellido</th>
+                <th scope="col">Nombres</th>
+                <th scope="col">País</th>
+                <th scope="col">Tipo de documento</th>
+                <th scope="col">Identificación</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Ingreso</th>
+                <th scope="col">Área</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Registro</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let empleado of empleados | paginate: { itemsPerPage: 10, currentPage: pages }">
+                <td>{{ empleado.apellido1 }}</td>
+                <td>{{ empleado.apellido2 }}</td>
+                <td>{{ empleado.nombres }}</td>
+                <td>{{ empleado.pais }}</td>
+                <td>{{ empleado.identificacion }}</td>
+                <td>{{ empleado.documento }}</td>
+                <td>{{ empleado.email }}</td>
+                <td>{{ empleado.ingreso }}</td>
+                <td>{{ empleado.area }}</td>
+                <td>{{ empleado.estado }}</td>
+                <td>{{ empleado.registro }}</td>
+                <td>
+                  <button routerLink="/editar-empleado/{{empleado._id}}" type="button"
+                    class="btn btn-outline-warning">Editar</button>
+                  &nbsp;
+                  <button type="button" class="btn btn-outline-danger" (click)="eliminarEmpleado(empleado._id)">Eliminar</button>  
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <pagination-controls previousLabel="Anterior" nextLabel="Siguiente" (pageChange)="pages = $event">
+          </pagination-controls>
+        </div>
+        <h5 style="text-align: start; margin-top: 10px;" *ngIf="empleados.length == 0">No hay empleados registrados
+        </h5>
+      </div>
+    </div>
+  </div>
+
+  
+
+
+<!-- Modal -->
+<div class="modal fade" id="formAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Agregar empleado</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="agregarForm"  (submit)="crearEmpleado()" novalidate>         
+          <div class="mb-3">
+            <label for="apellido1" class="form-label">Primer apellido</label>
+            <input type="text" class="form-control" id="apellido1" formControlName="apellido1">
+          </div>
+          <div class="error-message" *ngIf="!agregarForm.controls.apellido1.valid  && agregarForm.controls.apellido1.dirty">
+            <p style="color: red;">Por favor no uses puntos, comas u otro caranter especial</p>
+          </div>
+
+          <div class="mb-3">
+            <label for="apellido2" class="form-label">Segundo apellido</label>
+            <input type="text" class="form-control" id="apellido2" formControlName="apellido2">
+          </div>
+          <div class="error-message" *ngIf="!agregarForm.controls.apellido2.valid  && agregarForm.controls.apellido2.dirty">
+            <p style="color: red;">Por favor no uses puntos, comas u otro caranter especial</p>
+          </div>
+
+          <div class="mb-3">
+            <label for="nombre1" class="form-label">Primer nombre</label>
+            <input type="text" class="form-control" id="nombre1" formControlName="nombre1">
+          </div> 
+          <div class="error-message" *ngIf="!agregarForm.controls.nombre1.valid  && agregarForm.controls.nombre1.dirty">
+            <p style="color: red;">Por favor no uses puntos, comas u otro caranter especial</p>
+          </div>
+
+          <div class="mb-3">
+            <label for="nombre2" class="form-label">Segundo nombre</label>
+            <input type="text" class="form-control" id="nombre2" formControlName="nombre2">
+          </div> 
+          <div class="error-message" *ngIf="!agregarForm.controls.nombre2.valid  && agregarForm.controls.nombre2.dirty">
+            <p style="color: red;">Por favor no uses puntos, comas u otro caranter especial</p>
+          </div>
+
+          <div class="mb-3">
+            <label for="pais" class="form-label">País del empleo: </label>
+            <select class="form-select" aria-label="País" formControlName="pais">
+              <option value="Colombia">Colombia</option>
+              <option value="Estados Unidos">Estados Unidos</option>
+            </select>
+          </div> 
+          
+          <div class="mb-3">
+            <label for="identificacion" class="form-label">Tipo de Identificación:</label>
+            <select class="form-select" aria-label="País" formControlName="identificacion">
+              <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+              <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+              <option value="Pasaporte">Pasaporte</option>
+              <option value="Permiso Especial">Permiso Especial</option>
+            </select>
+          </div> 
+          
+          <div class="mb-3">
+            <label for="documento" class="form-label">Número de identificación:</label>
+            <input type="text" class="form-control" id="documento" formControlName="documento" (change)=onChange($event)>
+          </div>
+          <div class="error-message" *ngIf="!agregarForm.controls.documento.valid  && agregarForm.controls.documento.dirty">
+            <p style="color: red;">Por favor no uses puntos, comas u otro caranter especial</p>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" readonly formControlName="email">
+          </div>
+
+          <div class="mb-3">
+            <label for="registro" class="form-label">Fecha de ingreso:</label>
+            <input type="date" class="form-control" id="registro" format="yyy-MM-dd" max="{{hoy}}" formControlName="ingreso">
+          </div>
+
+          <div class="mb-3">
+            <label for="area" class="form-label">Área: </label>
+            <select class="form-select" aria-label="País" formControlName="area">
+              <option value="Administración">Administración</option>
+              <option value="Financiera">Financiera</option>
+              <option value="Compras">Compras</option>
+              <option value="Infraestructura">Infraestructura</option>
+              <option value="Talento Humano">Talento Humano</option>
+              <option value="Servicios Varios">Servicios Varios</option>
+            </select>
+          </div> 
+
+          <div class="mb-3">
+            <label for="estado" class="form-label">Estado: </label>
+            <select class="form-select" aria-label="estado" formControlName="estado">
+              <option value="Activo">Activo</option>
+            </select>
+          </div> 
+
+          <div class="mb-3">
+            <label for="registro" class="form-label">Fecha y hora de registro:</label>
+            <input type="date" class="form-control" id="registro" readonly formControlName="registro">
+          </div>
+
+        </form>  
+      </div>
+      <div class="modal-footer">
+        <button type="button" #cerrarForm class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="crearEmpleado()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
